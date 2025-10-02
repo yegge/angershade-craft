@@ -8,77 +8,77 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 96%;
-    --foreground: 0 0% 5%;
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
+    --card-foreground: 0 0% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
+    --popover-foreground: 0 0% 10%;
 
-    --primary: 263 70% 50%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 20%;
+    --primary-foreground: 0 0% 98%;
 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 10%;
 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
+    --muted: 0 0% 92%;
+    --muted-foreground: 0 0% 45%;
 
-    --accent: 280 60% 58%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 30%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 263 70% 50%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 20%;
 
     --radius: 0.75rem;
 
     /* Custom blog tokens */
-    --blog-gradient: linear-gradient(135deg, hsl(263 70% 50%) 0%, hsl(280 60% 58%) 100%);
-    --blog-hero-gradient: linear-gradient(180deg, hsl(263 70% 50% / 0.05) 0%, hsl(280 60% 58% / 0.02) 100%);
-    --blog-card-shadow: 0 4px 16px -4px hsl(263 70% 50% / 0.1);
-    --blog-hover-shadow: 0 8px 24px -8px hsl(263 70% 50% / 0.2);
+    --blog-gradient: linear-gradient(135deg, hsl(0 0% 20%) 0%, hsl(0 0% 30%) 100%);
+    --blog-hero-gradient: linear-gradient(180deg, hsl(0 0% 20% / 0.05) 0%, hsl(0 0% 30% / 0.02) 100%);
+    --blog-card-shadow: 0 4px 16px -4px hsl(0 0% 0% / 0.1);
+    --blog-hover-shadow: 0 8px 24px -8px hsl(0 0% 0% / 0.2);
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --background: 0 0% 8%;
+    --foreground: 0 0% 95%;
 
-    --card: 240 10% 7%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 12%;
+    --card-foreground: 0 0% 95%;
 
-    --popover: 240 10% 7%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 12%;
+    --popover-foreground: 0 0% 95%;
 
-    --primary: 263 70% 60%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 0 0% 85%;
+    --primary-foreground: 0 0% 10%;
 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 95%;
 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
+    --muted: 0 0% 18%;
+    --muted-foreground: 0 0% 60%;
 
-    --accent: 280 60% 65%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 0 0% 75%;
+    --accent-foreground: 0 0% 10%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 263 70% 60%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 0 0% 85%;
 
-    --blog-gradient: linear-gradient(135deg, hsl(263 70% 60%) 0%, hsl(280 60% 65%) 100%);
-    --blog-hero-gradient: linear-gradient(180deg, hsl(263 70% 60% / 0.1) 0%, hsl(280 60% 65% / 0.05) 100%);
-    --blog-card-shadow: 0 4px 16px -4px hsl(263 70% 60% / 0.2);
-    --blog-hover-shadow: 0 8px 24px -8px hsl(263 70% 60% / 0.3);
+    --blog-gradient: linear-gradient(135deg, hsl(0 0% 85%) 0%, hsl(0 0% 75%) 100%);
+    --blog-hero-gradient: linear-gradient(180deg, hsl(0 0% 85% / 0.1) 0%, hsl(0 0% 75% / 0.05) 100%);
+    --blog-card-shadow: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
+    --blog-hover-shadow: 0 8px 24px -8px hsl(0 0% 0% / 0.5);
   }
 }
 
