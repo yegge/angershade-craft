@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 
 type Post = {
   id: string;
@@ -133,7 +134,12 @@ const Post = () => {
 
           <div
             className="prose-blog"
-            dangerouslySetInnerHTML={{ __html: post.content_html }}
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(post.content_html, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+                ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel']
+              })
+            }}
           />
         </div>
       </article>

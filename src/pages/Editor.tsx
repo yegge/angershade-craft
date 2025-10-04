@@ -11,6 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Save, Send } from "lucide-react";
+import { useUserRole } from "@/hooks/useUserRole";
+import DOMPurify from "dompurify";
 
 const categories = ["Angershade", "The Corruptive", "Yegge"] as const;
 
@@ -18,6 +20,7 @@ const Editor = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const postId = searchParams.get("id");
+  const { isAuthor, loading: roleLoading } = useUserRole();
   
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -40,6 +43,13 @@ const Editor = () => {
 
     checkAuth();
   }, [navigate]);
+
+  useEffect(() => {
+    if (!roleLoading && !isAuthor) {
+      toast.error("You don't have permission to access the editor");
+      navigate("/");
+    }
+  }, [isAuthor, roleLoading, navigate]);
 
   useEffect(() => {
     if (postId && user) {
@@ -89,12 +99,19 @@ const Editor = () => {
 
     try {
       const slug = createSlug(title);
+      
+      // Sanitize HTML content before saving
+      const sanitizedContent = DOMPurify.sanitize(content, {
+        ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'a', 'img', 'blockquote', 'code', 'pre', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+        ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel']
+      });
+      
       const postData = {
         title,
         slug,
         excerpt: excerpt || null,
-        content: { html: content },
-        content_html: content,
+        content: { html: sanitizedContent },
+        content_html: sanitizedContent,
         category,
         status,
         author_id: user.id,
@@ -175,7 +192,8 @@ const Editor = () => {
     }
   };
 
-  if (!user) return null;
+  if (!user || roleLoading) return null;
+  if (!isAuthor) return null;
 
   return (
     <div className="min-h-screen bg-background">

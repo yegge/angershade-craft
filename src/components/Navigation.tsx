@@ -4,10 +4,12 @@ import { PenSquare, LogOut, User } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
+import { useUserRole } from "@/hooks/useUserRole";
 
 export const Navigation = () => {
   const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
+  const { isAuthor } = useUserRole();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -58,12 +60,14 @@ export const Navigation = () => {
           <div className="flex items-center gap-2">
             {user ? (
               <>
-                <Button variant="ghost" size="sm" asChild>
-                  <Link to="/editor">
-                    <PenSquare className="h-4 w-4 mr-2" />
-                    Write
-                  </Link>
-                </Button>
+                {isAuthor && (
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/editor">
+                      <PenSquare className="h-4 w-4 mr-2" />
+                      Write
+                    </Link>
+                  </Button>
+                )}
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 mr-2" />
                   Sign Out
