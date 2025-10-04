@@ -550,7 +550,7 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={50} minSize={30}>
           <div className="p-4 bg-muted/30 h-full overflow-auto">
-            <div className="max-w-3xl mx-auto bg-background p-6 rounded-lg shadow-sm">
+            <div className="max-w-6xl mx-auto bg-background p-6 rounded-lg shadow-sm">
               {viewMode === 'markdown' ? (
                 <div className="prose-blog">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
