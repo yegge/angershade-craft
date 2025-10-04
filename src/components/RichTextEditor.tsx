@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -8,10 +9,13 @@ import { Button } from '@/components/ui/button';
 import { 
   Bold, Italic, Code, List, ListOrdered, Quote, 
   Heading1, Heading2, Heading3, Image as ImageIcon,
-  Undo, Redo
+  Undo, Redo, Eye, FileCode, FileText
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/resizable';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const lowlight = createLowlight(common);
 
@@ -21,6 +25,8 @@ type RichTextEditorProps = {
 };
 
 export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
+  const [viewMode, setViewMode] = useState<'editor' | 'split' | 'html' | 'markdown'>('split');
+  
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -85,9 +91,19 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
 
   if (!editor) return null;
 
+  const getPreviewContent = () => {
+    if (viewMode === 'html') {
+      return editor.getHTML();
+    }
+    if (viewMode === 'markdown') {
+      return editor.getText();
+    }
+    return editor.getHTML();
+  };
+
   return (
     <div className="border rounded-lg overflow-hidden">
-      <div className="border-b bg-muted/50 p-2 flex flex-wrap gap-1">
+      <div className="border-b bg-muted/50 p-2 flex flex-wrap gap-1 items-center">
         <Button
           type="button"
           variant="ghost"
@@ -208,8 +224,69 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
         >
           <Redo className="h-4 w-4" />
         </Button>
+        <div className="w-px h-6 bg-border mx-1" />
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setViewMode(viewMode === 'split' ? 'editor' : 'split')}
+          className={viewMode === 'split' ? 'bg-muted' : ''}
+          title="Toggle Split View"
+        >
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setViewMode(viewMode === 'html' ? 'split' : 'html')}
+          className={viewMode === 'html' ? 'bg-muted' : ''}
+          title="View HTML"
+        >
+          <FileCode className="h-4 w-4" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => setViewMode(viewMode === 'markdown' ? 'split' : 'markdown')}
+          className={viewMode === 'markdown' ? 'bg-muted' : ''}
+          title="View Markdown"
+        >
+          <FileText className="h-4 w-4" />
+        </Button>
       </div>
-      <EditorContent editor={editor} className="bg-background" />
+      
+      {viewMode === 'editor' ? (
+        <EditorContent editor={editor} className="bg-background" />
+      ) : (
+        <ResizablePanelGroup direction="horizontal" className="min-h-[500px]">
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <EditorContent editor={editor} className="bg-background h-full" />
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={50} minSize={30}>
+            <div className="p-4 bg-background h-full overflow-auto">
+              {viewMode === 'html' ? (
+                <pre className="text-sm whitespace-pre-wrap font-mono">
+                  <code>{getPreviewContent()}</code>
+                </pre>
+              ) : viewMode === 'markdown' ? (
+                <div className="prose-blog">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {getPreviewContent()}
+                  </ReactMarkdown>
+                </div>
+              ) : (
+                <div 
+                  className="prose-blog"
+                  dangerouslySetInnerHTML={{ __html: getPreviewContent() }}
+                />
+              )}
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+      )}
     </div>
   );
 };
