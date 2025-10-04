@@ -12,6 +12,9 @@ import NotFound from "./pages/NotFound";
 import Yegge from "./pages/Yegge";
 import Angershade from "./pages/Angershade";
 import TheCorruptive from "./pages/TheCorruptive";
+import Yegge from "./pages/Yegge";
+import Angershade from "./pages/Angershade";
+import TheCorruptive from "./pages/TheCorruptive";
 import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
