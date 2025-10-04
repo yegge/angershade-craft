@@ -130,27 +130,64 @@ All colors MUST be HSL.
   }
   
   .prose-blog {
-    @apply max-w-none;
+    @apply max-w-none text-foreground;
+    line-height: 1.75;
   }
   
   .prose-blog h1 {
-    @apply text-4xl font-serif font-bold mt-8 mb-4;
+    @apply text-4xl font-serif font-bold mt-8 mb-4 text-foreground;
   }
   
   .prose-blog h2 {
-    @apply text-3xl font-serif font-bold mt-6 mb-3;
+    @apply text-3xl font-serif font-bold mt-6 mb-3 text-foreground;
   }
   
   .prose-blog h3 {
-    @apply text-2xl font-serif font-bold mt-4 mb-2;
+    @apply text-2xl font-serif font-bold mt-4 mb-2 text-foreground;
+  }
+
+  .prose-blog h4 {
+    @apply text-xl font-serif font-bold mt-3 mb-2 text-foreground;
+  }
+
+  .prose-blog h5 {
+    @apply text-lg font-serif font-bold mt-3 mb-2 text-foreground;
+  }
+
+  .prose-blog h6 {
+    @apply text-base font-serif font-bold mt-3 mb-2 text-foreground;
   }
   
   .prose-blog p {
-    @apply text-base leading-relaxed mb-4;
+    @apply text-base leading-relaxed mb-4 text-foreground;
   }
   
   .prose-blog a {
     @apply text-primary hover:text-accent underline transition-colors;
+  }
+
+  .prose-blog strong {
+    @apply font-bold text-foreground;
+  }
+
+  .prose-blog em {
+    @apply italic text-foreground;
+  }
+
+  .prose-blog ul {
+    @apply list-disc list-outside ml-6 mb-4 space-y-2;
+  }
+
+  .prose-blog ol {
+    @apply list-decimal list-outside ml-6 mb-4 space-y-2;
+  }
+
+  .prose-blog li {
+    @apply text-base leading-relaxed text-foreground;
+  }
+
+  .prose-blog li > p {
+    @apply mb-2;
   }
   
   .prose-blog pre {
@@ -158,15 +195,39 @@ All colors MUST be HSL.
   }
   
   .prose-blog code {
-    @apply bg-muted px-2 py-1 rounded text-sm;
+    @apply bg-muted px-2 py-1 rounded text-sm font-mono;
+  }
+
+  .prose-blog pre code {
+    @apply p-0 bg-transparent;
   }
   
   .prose-blog img {
-    @apply rounded-lg my-6;
+    @apply rounded-lg my-6 max-w-full h-auto;
   }
   
   .prose-blog blockquote {
-    @apply border-l-4 border-primary pl-4 italic my-4;
+    @apply border-l-4 border-primary pl-4 italic my-4 text-muted-foreground;
+  }
+
+  .prose-blog table {
+    @apply w-full border-collapse my-4;
+  }
+
+  .prose-blog thead {
+    @apply border-b-2 border-border;
+  }
+
+  .prose-blog th {
+    @apply p-2 text-left font-bold text-foreground;
+  }
+
+  .prose-blog td {
+    @apply p-2 border-t border-border text-foreground;
+  }
+
+  .prose-blog tr:hover {
+    @apply bg-muted/50;
   }
 
   /* Category-specific themes */
