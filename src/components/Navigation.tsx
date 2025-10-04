@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PenSquare, LogOut, User, FileText } from "lucide-react";
+import { PenSquare, LogOut, User, FileText, Settings } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -9,7 +9,7 @@ import { useUserRole } from "@/hooks/useUserRole";
 export const Navigation = () => {
   const location = useLocation();
   const [user, setUser] = useState<SupabaseUser | null>(null);
-  const { isAuthor } = useUserRole();
+  const { isAuthor, role } = useUserRole();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -75,6 +75,14 @@ export const Navigation = () => {
                       </Link>
                     </Button>
                   </>
+                )}
+                {role === 'admin' && (
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link to="/admin/settings">
+                      <Settings className="h-4 w-4 mr-2" />
+                      Settings
+                    </Link>
+                  </Button>
                 )}
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 mr-2" />
