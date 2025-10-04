@@ -59,7 +59,7 @@ const TheCorruptive = () => {
   }, []);
 
   return (
-    <div className="min-h-screen corruptive-theme">
+    <div className="min-h-screen category-the-corruptive">
       <CategoryHeader category={category} />
       
       <div className="border-t border-foreground/10" />

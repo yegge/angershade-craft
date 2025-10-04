@@ -59,7 +59,7 @@ const Yegge = () => {
   }, []);
 
   return (
-    <div className="min-h-screen yegge-theme">
+    <div className="min-h-screen category-yegge">
       <CategoryHeader category={category} />
       
       <div className="border-t border-foreground/10" />
