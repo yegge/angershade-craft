@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
@@ -6,10 +6,11 @@ import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import Placeholder from '@tiptap/extension-placeholder';
 import { common, createLowlight } from 'lowlight';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { 
   Bold, Italic, Code, List, ListOrdered, Quote, 
   Heading1, Heading2, Heading3, Image as ImageIcon,
-  Undo, Redo, Eye, FileCode, FileText
+  Undo, Redo, Hash, Link2, Minus, Table
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -25,7 +26,9 @@ type RichTextEditorProps = {
 };
 
 export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
-  const [viewMode, setViewMode] = useState<'editor' | 'split' | 'html' | 'markdown'>('split');
+  const [viewMode, setViewMode] = useState<'rich' | 'markdown' | 'html'>('rich');
+  const [markdownContent, setMarkdownContent] = useState('');
+  const [htmlContent, setHtmlContent] = useState('');
   
   const editor = useEditor({
     extensions: [
@@ -48,6 +51,14 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
       },
     },
   });
+
+  useEffect(() => {
+    if (viewMode === 'markdown' && editor) {
+      setMarkdownContent(editor.getText());
+    } else if (viewMode === 'html' && editor) {
+      setHtmlContent(editor.getHTML());
+    }
+  }, [viewMode, editor]);
 
   const handleImageUpload = async () => {
     const input = document.createElement('input');
@@ -89,21 +100,265 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
     input.click();
   };
 
-  if (!editor) return null;
-
-  const getPreviewContent = () => {
-    if (viewMode === 'html') {
-      return editor.getHTML();
-    }
-    if (viewMode === 'markdown') {
-      return editor.getText();
-    }
-    return editor.getHTML();
+  
+  const handleMarkdownChange = (value: string) => {
+    setMarkdownContent(value);
+    onChange(value);
   };
 
-  return (
-    <div className="border rounded-lg overflow-hidden">
-      <div className="border-b bg-muted/50 p-2 flex flex-wrap gap-1 items-center">
+  const handleHtmlChange = (value: string) => {
+    setHtmlContent(value);
+    onChange(value);
+  };
+
+  const insertMarkdown = (before: string, after: string = '') => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = markdownContent.substring(start, end);
+    const newText = markdownContent.substring(0, start) + before + selectedText + after + markdownContent.substring(end);
+    
+    setMarkdownContent(newText);
+    onChange(newText);
+  };
+
+  const insertHtml = (tag: string) => {
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = htmlContent.substring(start, end);
+    const newText = htmlContent.substring(0, start) + `<${tag}>` + selectedText + `</${tag}>` + htmlContent.substring(end);
+    
+    setHtmlContent(newText);
+    onChange(newText);
+  };
+
+  if (!editor) return null;
+
+  const renderToolbar = () => {
+    if (viewMode === 'markdown') {
+      return (
+        <>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('**', '**')}
+            title="Bold"
+          >
+            <Bold className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('*', '*')}
+            title="Italic"
+          >
+            <Italic className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('`', '`')}
+            title="Code"
+          >
+            <Code className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('# ', '')}
+            title="Heading 1"
+          >
+            <Heading1 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('## ', '')}
+            title="Heading 2"
+          >
+            <Heading2 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('### ', '')}
+            title="Heading 3"
+          >
+            <Heading3 className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('- ', '')}
+            title="Bullet List"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('1. ', '')}
+            title="Numbered List"
+          >
+            <ListOrdered className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('> ', '')}
+            title="Quote"
+          >
+            <Quote className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('[', '](url)')}
+            title="Link"
+          >
+            <Link2 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertMarkdown('---\n', '')}
+            title="Horizontal Rule"
+          >
+            <Minus className="h-4 w-4" />
+          </Button>
+        </>
+      );
+    }
+
+    if (viewMode === 'html') {
+      return (
+        <>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('strong')}
+            title="Bold"
+          >
+            <Bold className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('em')}
+            title="Italic"
+          >
+            <Italic className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('code')}
+            title="Code"
+          >
+            <Code className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('h1')}
+            title="Heading 1"
+          >
+            <Heading1 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('h2')}
+            title="Heading 2"
+          >
+            <Heading2 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('h3')}
+            title="Heading 3"
+          >
+            <Heading3 className="h-4 w-4" />
+          </Button>
+          <div className="w-px h-6 bg-border mx-1" />
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('ul')}
+            title="Unordered List"
+          >
+            <List className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('ol')}
+            title="Ordered List"
+          >
+            <ListOrdered className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('blockquote')}
+            title="Quote"
+          >
+            <Quote className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('a href=""')}
+            title="Link"
+          >
+            <Link2 className="h-4 w-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => insertHtml('table')}
+            title="Table"
+          >
+            <Table className="h-4 w-4" />
+          </Button>
+        </>
+      );
+    }
+
+    // Rich text toolbar
+    return (
+      <>
         <Button
           type="button"
           variant="ghost"
@@ -224,69 +479,94 @@ export const RichTextEditor = ({ content, onChange }: RichTextEditorProps) => {
         >
           <Redo className="h-4 w-4" />
         </Button>
+      </>
+    );
+  };
+
+  const getPreviewContent = () => {
+    if (viewMode === 'markdown') {
+      return markdownContent;
+    }
+    if (viewMode === 'html') {
+      return htmlContent;
+    }
+    return editor.getHTML();
+  };
+
+
+  return (
+    <div className="border rounded-lg overflow-hidden">
+      <div className="border-b bg-muted/50 p-2 flex flex-wrap gap-1 items-center">
+        {renderToolbar()}
         <div className="w-px h-6 bg-border mx-1" />
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setViewMode(viewMode === 'split' ? 'editor' : 'split')}
-          className={viewMode === 'split' ? 'bg-muted' : ''}
-          title="Toggle Split View"
-        >
-          <Eye className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setViewMode(viewMode === 'html' ? 'split' : 'html')}
-          className={viewMode === 'html' ? 'bg-muted' : ''}
-          title="View HTML"
-        >
-          <FileCode className="h-4 w-4" />
-        </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setViewMode(viewMode === 'markdown' ? 'split' : 'markdown')}
-          className={viewMode === 'markdown' ? 'bg-muted' : ''}
-          title="View Markdown"
-        >
-          <FileText className="h-4 w-4" />
-        </Button>
+        <div className="flex gap-1 ml-auto">
+          <Button
+            type="button"
+            variant={viewMode === 'rich' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('rich')}
+          >
+            Rich Text
+          </Button>
+          <Button
+            type="button"
+            variant={viewMode === 'markdown' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('markdown')}
+          >
+            Markdown
+          </Button>
+          <Button
+            type="button"
+            variant={viewMode === 'html' ? 'default' : 'ghost'}
+            size="sm"
+            onClick={() => setViewMode('html')}
+          >
+            HTML
+          </Button>
+        </div>
       </div>
       
-      {viewMode === 'editor' ? (
-        <EditorContent editor={editor} className="bg-background" />
-      ) : (
-        <ResizablePanelGroup direction="horizontal" className="min-h-[500px]">
-          <ResizablePanel defaultSize={50} minSize={30}>
+      <ResizablePanelGroup direction="horizontal" className="min-h-[500px]">
+        <ResizablePanel defaultSize={50} minSize={30}>
+          {viewMode === 'markdown' ? (
+            <Textarea
+              value={markdownContent}
+              onChange={(e) => handleMarkdownChange(e.target.value)}
+              className="h-full min-h-[500px] resize-none rounded-none border-0 focus-visible:ring-0 font-mono"
+              placeholder="Write your markdown here..."
+            />
+          ) : viewMode === 'html' ? (
+            <Textarea
+              value={htmlContent}
+              onChange={(e) => handleHtmlChange(e.target.value)}
+              className="h-full min-h-[500px] resize-none rounded-none border-0 focus-visible:ring-0 font-mono"
+              placeholder="Write your HTML here..."
+            />
+          ) : (
             <EditorContent editor={editor} className="bg-background h-full" />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={50} minSize={30}>
-            <div className="p-4 bg-background h-full overflow-auto">
-              {viewMode === 'html' ? (
-                <pre className="text-sm whitespace-pre-wrap font-mono">
-                  <code>{getPreviewContent()}</code>
-                </pre>
-              ) : viewMode === 'markdown' ? (
+          )}
+        </ResizablePanel>
+        <ResizableHandle withHandle />
+        <ResizablePanel defaultSize={50} minSize={30}>
+          <div className="p-4 bg-muted/30 h-full overflow-auto">
+            <div className="max-w-3xl mx-auto bg-background p-6 rounded-lg shadow-sm">
+              {viewMode === 'markdown' ? (
                 <div className="prose-blog">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {getPreviewContent()}
+                    {markdownContent || '*Preview will appear here...*'}
                   </ReactMarkdown>
                 </div>
               ) : (
                 <div 
                   className="prose-blog"
-                  dangerouslySetInnerHTML={{ __html: getPreviewContent() }}
+                  dangerouslySetInnerHTML={{ __html: getPreviewContent() || '<p class="text-muted-foreground">Preview will appear here...</p>' }}
                 />
               )}
             </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      )}
+          </div>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 };
