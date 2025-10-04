@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { PenSquare, LogOut, User } from "lucide-react";
+import { PenSquare, LogOut, User, FileText } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useEffect, useState } from "react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
@@ -61,12 +61,20 @@ export const Navigation = () => {
             {user ? (
               <>
                 {isAuthor && (
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to="/editor">
-                      <PenSquare className="h-4 w-4 mr-2" />
-                      Write
-                    </Link>
-                  </Button>
+                  <>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to="/drafts">
+                        <FileText className="h-4 w-4 mr-2" />
+                        Drafts
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to="/editor">
+                        <PenSquare className="h-4 w-4 mr-2" />
+                        Write
+                      </Link>
+                    </Button>
+                  </>
                 )}
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="h-4 w-4 mr-2" />

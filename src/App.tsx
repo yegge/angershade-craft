@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Post from "./pages/Post";
 import Editor from "./pages/Editor";
+import Drafts from "./pages/Drafts";
 import NotFound from "./pages/NotFound";
 import Yegge from "./pages/Yegge";
 import Angershade from "./pages/Angershade";
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/post/:slug" element={<Post />} />
             <Route path="/editor" element={<Editor />} />
+            <Route path="/drafts" element={<Drafts />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
