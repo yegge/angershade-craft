@@ -19,7 +19,7 @@ type Post = {
   published_at: string;
   profiles: {
     username: string;
-  };
+  } | null;
   post_tags: {
     tags: {
       name: string;
@@ -128,7 +128,7 @@ const Post = () => {
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <User className="h-4 w-4" />
-                <span>{post.profiles.username}</span>
+                <span>{post.profiles?.username || "Unknown Author"}</span>
               </div>
               <div className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
