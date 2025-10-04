@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useUserRole } from "@/hooks/useUserRole";
 import { Trash2 } from "lucide-react";
 
 type SiteSettings = {
@@ -29,22 +30,28 @@ type SiteLink = {
 const AdminSettings = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { role, loading: roleLoading } = useUserRole();
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<Record<string, SiteSettings>>({});
   const [links, setLinks] = useState<Record<string, SiteLink[]>>({});
 
   useEffect(() => {
-    checkAuth();
-    fetchSettings();
-    fetchLinks();
-  }, []);
-
-  const checkAuth = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      navigate("/auth");
+    if (!roleLoading && role !== "admin") {
+      toast({
+        title: "Access Denied",
+        description: "You must be an admin to access this page",
+        variant: "destructive",
+      });
+      navigate("/");
     }
-  };
+  }, [role, roleLoading, navigate, toast]);
+
+  useEffect(() => {
+    if (role === "admin") {
+      fetchSettings();
+      fetchLinks();
+    }
+  }, [role]);
 
   const fetchSettings = async () => {
     const { data, error } = await supabase
@@ -172,8 +179,12 @@ const AdminSettings = () => {
     }
   };
 
-  if (loading) {
+  if (roleLoading || loading) {
     return <div className="min-h-screen bg-background flex items-center justify-center">Loading...</div>;
+  }
+
+  if (role !== "admin") {
+    return null;
   }
 
   const CategorySettings = ({ category }: { category: string }) => {
