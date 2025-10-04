@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -143,5 +145,70 @@ All colors MUST be HSL.
   
   .prose-blog blockquote {
     @apply border-l-4 border-primary pl-4 italic my-4;
+  }
+
+  /* Category-specific themes */
+  .category-yegge {
+    --background: 0 0% 49%;
+    --foreground: 0 0% 0%;
+    --link-color: 0 100% 20%;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .category-yegge a {
+    color: hsl(var(--link-color));
+  }
+
+  .category-angershade {
+    --background: 0 0% 8%;
+    --foreground: 210 17% 95%;
+    --link-color: 0 100% 20%;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .category-angershade a {
+    color: hsl(var(--link-color));
+  }
+
+  .category-the-corruptive {
+    --background: 0 100% 11%;
+    --foreground: 210 17% 95%;
+    --link-color: 0 0% 100%;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+  }
+
+  .category-the-corruptive a {
+    color: hsl(var(--link-color));
+  }
+
+  /* Inter font for category pages */
+  .category-yegge,
+  .category-angershade,
+  .category-the-corruptive {
+    font-family: 'Inter', sans-serif;
+  }
+
+  .category-yegge h1,
+  .category-yegge h2,
+  .category-yegge h3,
+  .category-yegge h4,
+  .category-yegge h5,
+  .category-yegge h6,
+  .category-angershade h1,
+  .category-angershade h2,
+  .category-angershade h3,
+  .category-angershade h4,
+  .category-angershade h5,
+  .category-angershade h6,
+  .category-the-corruptive h1,
+  .category-the-corruptive h2,
+  .category-the-corruptive h3,
+  .category-the-corruptive h4,
+  .category-the-corruptive h5,
+  .category-the-corruptive h6 {
+    font-family: 'Inter', sans-serif;
   }
 }

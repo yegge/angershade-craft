@@ -121,6 +121,63 @@ export type Database = {
         }
         Relationships: []
       }
+      site_links: {
+        Row: {
+          category: string
+          created_at: string
+          display_order: number
+          id: string
+          title: string
+          url: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          display_order: number
+          id?: string
+          title: string
+          url: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          title?: string
+          url?: string
+        }
+        Relationships: []
+      }
+      site_settings: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          logo_link: string | null
+          logo_url: string | null
+          tag_cloud_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          logo_link?: string | null
+          logo_url?: string | null
+          tag_cloud_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          logo_link?: string | null
+          logo_url?: string | null
+          tag_cloud_count?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tags: {
         Row: {
           created_at: string
