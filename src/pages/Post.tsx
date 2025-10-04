@@ -94,8 +94,21 @@ const Post = () => {
     );
   }
 
+  const getCategoryClass = (category: string) => {
+    switch (category) {
+      case "Yegge":
+        return "category-yegge";
+      case "Angershade":
+        return "category-angershade";
+      case "The Corruptive":
+        return "category-the-corruptive";
+      default:
+        return "";
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className={`min-h-screen ${getCategoryClass(post.category)}`}>
       <Navigation />
       <article className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
