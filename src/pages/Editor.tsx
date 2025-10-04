@@ -286,7 +286,11 @@ const Editor = () => {
 
             <div>
               <Label>Content</Label>
-              <RichTextEditor content={content} onChange={setContent} />
+              <RichTextEditor 
+                key={postId || 'new'} 
+                content={content} 
+                onChange={setContent} 
+              />
             </div>
           </div>
         </div>
