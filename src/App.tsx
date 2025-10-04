@@ -12,10 +12,6 @@ import NotFound from "./pages/NotFound";
 import Yegge from "./pages/Yegge";
 import Angershade from "./pages/Angershade";
 import TheCorruptive from "./pages/TheCorruptive";
-import Yegge from "./pages/Yegge";
-import Angershade from "./pages/Angershade";
-import TheCorruptive from "./pages/TheCorruptive";
-import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -34,7 +30,6 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/post/:slug" element={<Post />} />
             <Route path="/editor" element={<Editor />} />
-            <Route path="/admin/settings" element={<AdminSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -26,7 +26,7 @@ type Post = {
 const Yegge = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const category = "yegge";
+  const category = "Yegge" as const;
 
   useEffect(() => {
     const fetchPosts = async () => {

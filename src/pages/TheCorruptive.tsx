@@ -26,7 +26,7 @@ type Post = {
 const TheCorruptive = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const category = "the-corruptive";
+  const category = "The Corruptive" as const;
 
   useEffect(() => {
     const fetchPosts = async () => {

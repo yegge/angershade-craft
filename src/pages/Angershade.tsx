@@ -26,7 +26,7 @@ type Post = {
 const Angershade = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const category = "angershade";
+  const category = "Angershade" as const;
 
   useEffect(() => {
     const fetchPosts = async () => {

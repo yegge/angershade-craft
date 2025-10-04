@@ -98,6 +98,28 @@ All colors MUST be HSL.
   }
 }
 
+/* Category Themes */
+.yegge-theme {
+  --background: 0 0% 49%;
+  --foreground: 0 0% 0%;
+  --link-color: #660000;
+  font-family: 'Inter', sans-serif;
+}
+
+.angershade-theme {
+  --background: 0 0% 8%;
+  --foreground: 210 17% 96%;
+  --link-color: #660000;
+  font-family: 'Inter', sans-serif;
+}
+
+.corruptive-theme {
+  --background: 0 98% 22%;
+  --foreground: 210 17% 96%;
+  --link-color: #FFFFFF;
+  font-family: 'Inter', sans-serif;
+}
+
 @layer utilities {
   .blog-gradient {
     background: var(--blog-gradient);
