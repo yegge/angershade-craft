@@ -240,6 +240,12 @@ const AdminSettings = () => {
     const setting = settings[category];
     const categoryLinks = links[category] || [];
     const [uploading, setUploading] = useState(false);
+    const [localSetting, setLocalSetting] = useState(setting);
+
+    // Sync local state when parent state changes
+    useEffect(() => {
+      setLocalSetting(setting);
+    }, [setting]);
 
     const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
@@ -248,12 +254,21 @@ const AdminSettings = () => {
       setUploading(true);
       const publicUrl = await uploadLogo(file, category);
       if (publicUrl) {
+        const updated = { ...localSetting, logo_url: publicUrl };
+        setLocalSetting(updated);
         setSettings({
           ...settings,
-          [category]: { ...setting, logo_url: publicUrl },
+          [category]: updated,
         });
       }
       setUploading(false);
+    };
+
+    const handleBlur = () => {
+      setSettings({
+        ...settings,
+        [category]: localSetting,
+      });
     };
 
     return (
@@ -268,13 +283,11 @@ const AdminSettings = () => {
               <Label htmlFor={`logo-url-${category}`}>Logo URL</Label>
               <Input
                 id={`logo-url-${category}`}
-                value={setting?.logo_url || ""}
+                value={localSetting?.logo_url || ""}
                 onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    [category]: { ...setting, logo_url: e.target.value },
-                  })
+                  setLocalSetting({ ...localSetting, logo_url: e.target.value })
                 }
+                onBlur={handleBlur}
                 placeholder="https://example.com/logo.png"
               />
             </div>
@@ -295,13 +308,11 @@ const AdminSettings = () => {
               <Label htmlFor={`logo-link-${category}`}>Logo Link</Label>
               <Input
                 id={`logo-link-${category}`}
-                value={setting?.logo_link || ""}
+                value={localSetting?.logo_link || ""}
                 onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    [category]: { ...setting, logo_link: e.target.value },
-                  })
+                  setLocalSetting({ ...localSetting, logo_link: e.target.value })
                 }
+                onBlur={handleBlur}
                 placeholder="https://example.com"
               />
             </div>
@@ -311,13 +322,11 @@ const AdminSettings = () => {
               <Input
                 id={`tag-cloud-${category}`}
                 type="number"
-                value={setting?.tag_cloud_count || 10}
+                value={localSetting?.tag_cloud_count || 10}
                 onChange={(e) =>
-                  setSettings({
-                    ...settings,
-                    [category]: { ...setting, tag_cloud_count: parseInt(e.target.value) },
-                  })
+                  setLocalSetting({ ...localSetting, tag_cloud_count: parseInt(e.target.value) })
                 }
+                onBlur={handleBlur}
                 min="1"
                 max="20"
               />
@@ -328,13 +337,11 @@ const AdminSettings = () => {
                 <Label htmlFor={`primary-font-${category}`}>Primary Font</Label>
                 <select
                   id={`primary-font-${category}`}
-                  value={setting?.primary_font || 'Inter'}
+                  value={localSetting?.primary_font || 'Inter'}
                   onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      [category]: { ...setting, primary_font: e.target.value },
-                    })
+                    setLocalSetting({ ...localSetting, primary_font: e.target.value })
                   }
+                  onBlur={handleBlur}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {fontOptions.map((font) => (
@@ -347,13 +354,11 @@ const AdminSettings = () => {
                 <Label htmlFor={`secondary-font-${category}`}>Secondary Font</Label>
                 <select
                   id={`secondary-font-${category}`}
-                  value={setting?.secondary_font || 'Inter'}
+                  value={localSetting?.secondary_font || 'Inter'}
                   onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      [category]: { ...setting, secondary_font: e.target.value },
-                    })
+                    setLocalSetting({ ...localSetting, secondary_font: e.target.value })
                   }
+                  onBlur={handleBlur}
                   className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   {fontOptions.map((font) => (
@@ -370,23 +375,19 @@ const AdminSettings = () => {
                   <Input
                     id={`primary-color-${category}`}
                     type="color"
-                    value={setting?.primary_color || '#000000'}
+                    value={localSetting?.primary_color || '#000000'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, primary_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, primary_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     className="w-20 h-10"
                   />
                   <Input
-                    value={setting?.primary_color || '#000000'}
+                    value={localSetting?.primary_color || '#000000'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, primary_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, primary_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     placeholder="#000000"
                   />
                 </div>
@@ -398,23 +399,19 @@ const AdminSettings = () => {
                   <Input
                     id={`secondary-color-${category}`}
                     type="color"
-                    value={setting?.secondary_color || '#666666'}
+                    value={localSetting?.secondary_color || '#666666'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, secondary_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, secondary_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     className="w-20 h-10"
                   />
                   <Input
-                    value={setting?.secondary_color || '#666666'}
+                    value={localSetting?.secondary_color || '#666666'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, secondary_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, secondary_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     placeholder="#666666"
                   />
                 </div>
@@ -426,23 +423,19 @@ const AdminSettings = () => {
                   <Input
                     id={`accent-color-${category}`}
                     type="color"
-                    value={setting?.accent_color || '#0066cc'}
+                    value={localSetting?.accent_color || '#0066cc'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, accent_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, accent_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     className="w-20 h-10"
                   />
                   <Input
-                    value={setting?.accent_color || '#0066cc'}
+                    value={localSetting?.accent_color || '#0066cc'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, accent_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, accent_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     placeholder="#0066cc"
                   />
                 </div>
@@ -454,23 +447,19 @@ const AdminSettings = () => {
                   <Input
                     id={`background-color-${category}`}
                     type="color"
-                    value={setting?.background_color || '#ffffff'}
+                    value={localSetting?.background_color || '#ffffff'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, background_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, background_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     className="w-20 h-10"
                   />
                   <Input
-                    value={setting?.background_color || '#ffffff'}
+                    value={localSetting?.background_color || '#ffffff'}
                     onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        [category]: { ...setting, background_color: e.target.value },
-                      })
+                      setLocalSetting({ ...localSetting, background_color: e.target.value })
                     }
+                    onBlur={handleBlur}
                     placeholder="#ffffff"
                   />
                 </div>

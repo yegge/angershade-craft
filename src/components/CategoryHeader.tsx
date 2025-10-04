@@ -106,13 +106,14 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
             {/* Tag Cloud */}
             <div className="flex flex-wrap items-center gap-2 max-w-md">
               {tags.map((tag, idx) => (
-                <span
+                <Link
                   key={idx}
-                  className="text-xs px-2 py-1 bg-foreground/5 rounded-full"
+                  to={`/tag?tag=${encodeURIComponent(tag)}`}
+                  className="text-xs px-2 py-1 bg-foreground/5 rounded-full hover:bg-foreground/10 transition-colors cursor-pointer"
                   style={{ fontSize: `${0.7 + Math.random() * 0.4}rem` }}
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
           </div>
@@ -164,13 +165,14 @@ export const CategoryHeader = ({ category }: CategoryHeaderProps) => {
             {/* Tag Cloud */}
             <div className="flex flex-wrap items-center justify-center gap-3 my-8">
               {tags.map((tag, idx) => (
-                <span
+                <Link
                   key={idx}
-                  className="text-sm px-3 py-2 bg-foreground/5 rounded-full"
+                  to={`/tag?tag=${encodeURIComponent(tag)}`}
+                  className="text-sm px-3 py-2 bg-foreground/5 rounded-full hover:bg-foreground/10 transition-colors cursor-pointer"
                   style={{ fontSize: `${0.8 + Math.random() * 0.5}rem` }}
                 >
                   {tag}
-                </span>
+                </Link>
               ))}
             </div>
 

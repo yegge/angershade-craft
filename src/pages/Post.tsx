@@ -164,9 +164,11 @@ const Post = () => {
             {post.post_tags && post.post_tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {post.post_tags.map((pt, idx) => (
-                  <Badge key={idx} variant="outline">
-                    {pt.tags.name}
-                  </Badge>
+                  <Link key={idx} to={`/tag?tag=${encodeURIComponent(pt.tags.name)}`}>
+                    <Badge variant="outline" className="cursor-pointer hover:bg-accent">
+                      {pt.tags.name}
+                    </Badge>
+                  </Link>
                 ))}
               </div>
             )}
