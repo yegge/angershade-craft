@@ -4,11 +4,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, User, ArrowLeft } from "lucide-react";
+import { Calendar, User, ArrowLeft, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { useUserRole } from "@/hooks/useUserRole";
 
 type Post = {
   id: string;
@@ -17,6 +18,7 @@ type Post = {
   content_html: string;
   category: string;
   published_at: string;
+  author_id: string;
   profiles: {
     username: string;
   } | null;
@@ -31,6 +33,16 @@ const Post = () => {
   const { slug } = useParams();
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const { role } = useUserRole();
+
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setCurrentUserId(user?.id || null);
+    };
+    getCurrentUser();
+  }, []);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -107,17 +119,32 @@ const Post = () => {
     }
   };
 
+  const canEdit = currentUserId && (
+    role === "admin" || 
+    (role === "author" && post.author_id === currentUserId)
+  );
+
   return (
     <div className={`min-h-screen ${getCategoryClass(post.category)}`}>
       <Navigation />
       <article className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
-          <Button variant="ghost" size="sm" asChild className="mb-6">
-            <Link to="/">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Posts
-            </Link>
-          </Button>
+          <div className="flex items-center justify-between mb-6">
+            <Button variant="ghost" size="sm" asChild>
+              <Link to="/">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to Posts
+              </Link>
+            </Button>
+            {canEdit && (
+              <Button size="sm" asChild>
+                <Link to={`/editor?id=${post.id}`}>
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Post
+                </Link>
+              </Button>
+            )}
+          </div>
 
           <header className="mb-8">
             <Badge className="mb-4">{post.category}</Badge>
