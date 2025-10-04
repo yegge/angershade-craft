@@ -7,9 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar, User, ArrowLeft, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
 import { useUserRole } from "@/hooks/useUserRole";
+import DOMPurify from "dompurify";
 
 type Post = {
   id: string;
@@ -173,11 +172,15 @@ const Post = () => {
             )}
           </header>
 
-          <div className="prose-blog">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
-              {post.content_html}
-            </ReactMarkdown>
-          </div>
+          <div 
+            className="prose-blog"
+            dangerouslySetInnerHTML={{ 
+              __html: DOMPurify.sanitize(post.content_html, {
+                ALLOWED_TAGS: ['p', 'br', 'strong', 'em', 'u', 's', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li', 'blockquote', 'code', 'pre', 'a', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
+                ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel']
+              })
+            }}
+          />
         </div>
       </article>
       <Footer />
