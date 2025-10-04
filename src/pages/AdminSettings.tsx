@@ -17,6 +17,12 @@ type SiteSettings = {
   logo_url: string | null;
   logo_link: string | null;
   tag_cloud_count: number;
+  primary_font: string;
+  secondary_font: string;
+  primary_color: string;
+  secondary_color: string;
+  accent_color: string;
+  background_color: string;
 };
 
 type SiteLink = {
@@ -88,6 +94,30 @@ const AdminSettings = () => {
     }
   };
 
+  const uploadLogo = async (file: File, category: string) => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${category}-logo-${Date.now()}.${fileExt}`;
+    
+    const { error: uploadError } = await supabase.storage
+      .from('post-images')
+      .upload(fileName, file, { upsert: true });
+
+    if (uploadError) {
+      toast({
+        title: "Error",
+        description: "Failed to upload logo",
+        variant: "destructive",
+      });
+      return null;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('post-images')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
   const updateSettings = async (category: string) => {
     const setting = settings[category];
     const { error } = await supabase
@@ -96,6 +126,12 @@ const AdminSettings = () => {
         logo_url: setting.logo_url,
         logo_link: setting.logo_link,
         tag_cloud_count: setting.tag_cloud_count,
+        primary_font: setting.primary_font,
+        secondary_font: setting.secondary_font,
+        primary_color: setting.primary_color,
+        secondary_color: setting.secondary_color,
+        accent_color: setting.accent_color,
+        background_color: setting.background_color,
       })
       .eq("category", category);
 
@@ -187,16 +223,45 @@ const AdminSettings = () => {
     return null;
   }
 
+  const fontOptions = [
+    'Inter',
+    'Arial',
+    'Helvetica',
+    'Georgia',
+    'Times New Roman',
+    'Courier New',
+    'Verdana',
+    'Trebuchet MS',
+    'Comic Sans MS',
+    'Impact',
+  ];
+
   const CategorySettings = ({ category }: { category: string }) => {
     const setting = settings[category];
     const categoryLinks = links[category] || [];
+    const [uploading, setUploading] = useState(false);
+
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setUploading(true);
+      const publicUrl = await uploadLogo(file, category);
+      if (publicUrl) {
+        setSettings({
+          ...settings,
+          [category]: { ...setting, logo_url: publicUrl },
+        });
+      }
+      setUploading(false);
+    };
 
     return (
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Logo Settings</CardTitle>
-            <CardDescription>Configure the logo and link for {category}</CardDescription>
+            <CardTitle>Site Settings</CardTitle>
+            <CardDescription>Configure appearance for {category}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -213,6 +278,19 @@ const AdminSettings = () => {
                 placeholder="https://example.com/logo.png"
               />
             </div>
+
+            <div>
+              <Label htmlFor={`logo-upload-${category}`}>Upload Logo</Label>
+              <Input
+                id={`logo-upload-${category}`}
+                type="file"
+                accept="image/*"
+                onChange={handleLogoUpload}
+                disabled={uploading}
+              />
+              {uploading && <p className="text-sm text-muted-foreground mt-1">Uploading...</p>}
+            </div>
+
             <div>
               <Label htmlFor={`logo-link-${category}`}>Logo Link</Label>
               <Input
@@ -227,6 +305,7 @@ const AdminSettings = () => {
                 placeholder="https://example.com"
               />
             </div>
+
             <div>
               <Label htmlFor={`tag-cloud-${category}`}>Tag Cloud Count</Label>
               <Input
@@ -243,6 +322,161 @@ const AdminSettings = () => {
                 max="20"
               />
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor={`primary-font-${category}`}>Primary Font</Label>
+                <select
+                  id={`primary-font-${category}`}
+                  value={setting?.primary_font || 'Inter'}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      [category]: { ...setting, primary_font: e.target.value },
+                    })
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {fontOptions.map((font) => (
+                    <option key={font} value={font}>{font}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor={`secondary-font-${category}`}>Secondary Font</Label>
+                <select
+                  id={`secondary-font-${category}`}
+                  value={setting?.secondary_font || 'Inter'}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      [category]: { ...setting, secondary_font: e.target.value },
+                    })
+                  }
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                >
+                  {fontOptions.map((font) => (
+                    <option key={font} value={font}>{font}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor={`primary-color-${category}`}>Primary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id={`primary-color-${category}`}
+                    type="color"
+                    value={setting?.primary_color || '#000000'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, primary_color: e.target.value },
+                      })
+                    }
+                    className="w-20 h-10"
+                  />
+                  <Input
+                    value={setting?.primary_color || '#000000'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, primary_color: e.target.value },
+                      })
+                    }
+                    placeholder="#000000"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor={`secondary-color-${category}`}>Secondary Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id={`secondary-color-${category}`}
+                    type="color"
+                    value={setting?.secondary_color || '#666666'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, secondary_color: e.target.value },
+                      })
+                    }
+                    className="w-20 h-10"
+                  />
+                  <Input
+                    value={setting?.secondary_color || '#666666'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, secondary_color: e.target.value },
+                      })
+                    }
+                    placeholder="#666666"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor={`accent-color-${category}`}>Accent Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id={`accent-color-${category}`}
+                    type="color"
+                    value={setting?.accent_color || '#0066cc'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, accent_color: e.target.value },
+                      })
+                    }
+                    className="w-20 h-10"
+                  />
+                  <Input
+                    value={setting?.accent_color || '#0066cc'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, accent_color: e.target.value },
+                      })
+                    }
+                    placeholder="#0066cc"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor={`background-color-${category}`}>Background Color</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id={`background-color-${category}`}
+                    type="color"
+                    value={setting?.background_color || '#ffffff'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, background_color: e.target.value },
+                      })
+                    }
+                    className="w-20 h-10"
+                  />
+                  <Input
+                    value={setting?.background_color || '#ffffff'}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        [category]: { ...setting, background_color: e.target.value },
+                      })
+                    }
+                    placeholder="#ffffff"
+                  />
+                </div>
+              </div>
+            </div>
+
             <Button onClick={() => updateSettings(category)}>Save Settings</Button>
           </CardContent>
         </Card>

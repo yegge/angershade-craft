@@ -150,29 +150,47 @@ export type Database = {
       }
       site_settings: {
         Row: {
+          accent_color: string | null
+          background_color: string | null
           category: string
           created_at: string
           id: string
           logo_link: string | null
           logo_url: string | null
+          primary_color: string | null
+          primary_font: string | null
+          secondary_color: string | null
+          secondary_font: string | null
           tag_cloud_count: number | null
           updated_at: string
         }
         Insert: {
+          accent_color?: string | null
+          background_color?: string | null
           category: string
           created_at?: string
           id?: string
           logo_link?: string | null
           logo_url?: string | null
+          primary_color?: string | null
+          primary_font?: string | null
+          secondary_color?: string | null
+          secondary_font?: string | null
           tag_cloud_count?: number | null
           updated_at?: string
         }
         Update: {
+          accent_color?: string | null
+          background_color?: string | null
           category?: string
           created_at?: string
           id?: string
           logo_link?: string | null
           logo_url?: string | null
+          primary_color?: string | null
+          primary_font?: string | null
+          secondary_color?: string | null
+          secondary_font?: string | null
           tag_cloud_count?: number | null
           updated_at?: string
         }
